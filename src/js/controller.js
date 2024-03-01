@@ -1,10 +1,13 @@
 import * as model from './model.js';
+import { MODAL_CLOSE_SEC } from './config.js';
 // This is a default export and hence we can use any of the methods using recipeView.method_name
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
 import paginationView from './views/paginationView.js';
 import bookmarksView from './views/bookmarksView.js';
+import addRecipeView from './views/addRecipeView.js';
+
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -88,6 +91,36 @@ const controlAddBookmark = function () {
 const controlBookmarks = function () {
   bookmarksView.render(model.state.bookmarks);
 };
+
+const controlAddRecipe = async function (newRecipeData) {
+  try {
+    //Show loading spinner
+    addRecipeView.renderSpinner();
+    // Upload the new Recipe data
+    await model.uploadRecipe(newRecipeData);
+    console.log(model.state.recipe);
+
+    // Render the recipe
+    recipeView.render(model.state.recipe);
+
+    // Success message
+    addRecipeView.renderMessage();
+
+    // Render bookmark view
+    bookmarksView.render(model.state.bookmarks);
+
+    // Change id in the url:
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+    // CLose form Window
+    setTimeout(function () {
+      addRecipeView.toggleWindow();
+      // location.reload();
+    }, MODAL_CLOSE_SEC * 1000);
+  } catch (err) {
+    console.error(err);
+    addRecipeView.renderError(err.message);
+  }
+};
 const init = function () {
   bookmarksView.addHandlerRender(controlBookmarks);
   //For showing the single receipe according to the id
@@ -99,5 +132,7 @@ const init = function () {
 
   //For controlling pagination.
   paginationView.addHandlerClick(controlPagination);
+
+  addRecipeView._addHandlerUpload(controlAddRecipe);
 };
 init();
