@@ -4,7 +4,7 @@
   "description": "Recipe application",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html --dist-dir ./dist"
   },
   "author": "Devansh",
   "license": "ISC",
@@ -15,6 +15,7 @@
   "dependencies": {
     "core-js": "^3.36.0",
     "fractional": "^1.0.0",
+    "fracty": "^1.0.11",
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.71.0"
   }
